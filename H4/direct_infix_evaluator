@@ -1,0 +1,61 @@
+# Problem: 3.14 Programming Exercises no.3 (p113)
+
+from stack import Stack
+
+
+def infix_eval(infix_expr):
+    prec = {'*': 3, '/': 3,
+            '+': 2, '-': 2,
+            '(': 1
+            }
+
+    do_math = {
+        '*': lambda op1, op2: op1 * op2,
+        '/': lambda op1, op2: op1 / op2,
+        '+': lambda op1, op2: op1 + op2,
+        '-': lambda op1, op2: op1 - op2,
+    }
+
+    operand_stack = Stack()
+    operator_stack = Stack()
+    token_lst = infix_expr.split(' ')
+
+    for token in token_lst:
+        if token in '1234567890':
+            operand_stack.push(int(token))
+        elif token == '(':
+            operator_stack.push(token)
+        elif token == ')':
+            top_token = operator_stack.pop()
+            while top_token != '(':
+                operand2 = operand_stack.pop()
+                operand1 = operand_stack.pop()
+                temp = do_math[top_token](operand1, operand2)
+                operand_stack.push(temp)
+                top_token = operator_stack.pop()
+        elif token in prec.keys():
+            while (not operator_stack.is_empty()) and\
+                    (prec[operator_stack.peek()] >= prec[token]):
+                operand2 = operand_stack.pop()
+                operand1 = operand_stack.pop()
+                temp = do_math[operator_stack.pop()](operand1, operand2)
+                operand_stack.push(temp)
+            operator_stack.push(token)
+        else:
+            print('expr is wrong')
+            return
+
+    while not operator_stack.is_empty():
+        operand2 = operand_stack.pop()
+        operand1 = operand_stack.pop()
+        temp = do_math[operator_stack.pop()](operand1, operand2)
+        operand_stack.push(temp)
+
+    return operand_stack.pop()
+
+if __name__ == '__main__':
+    print(infix_eval('1 + 1'))
+    print(infix_eval('( 1 + 2 ) * 3'))
+    print(infix_eval('( 1 + 2 ) * ( 3 + 4 )'))
+    print(infix_eval('( 1 + 2 * 4 ) * 3'))
+    print(infix_eval('A'))
