@@ -1,6 +1,6 @@
 # Problem: 3.14 Programming Exercises no.3 (p113)
 
-from stack import Stack
+from pythonds.basic.stack import Stack
 
 
 def infix_eval(infix_expr):

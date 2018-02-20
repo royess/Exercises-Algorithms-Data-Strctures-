@@ -1,0 +1,41 @@
+# Problem: 3.14 Programming Exercises no.10 (p114)
+
+from pythonds.basic.queue import Queue
+
+
+def radix_sort(num_lst):
+    queues = {'main': Queue()}
+    for i in range(10):
+        queues[str(i)] = Queue()
+
+    for num in num_lst:
+        queues['main'].enqueue(num)
+
+    stop = False
+    i = 0
+
+    while not stop:
+        while not queues['main'].is_empty():
+            buffer = queues['main'].dequeue()
+
+            queue_index = buffer
+            for j in range(i):
+                queue_index //= 10
+            queue_index %= 10
+
+            queues[str(queue_index)].enqueue(buffer)
+
+        i += 1
+        if queues['0'].size() == len(num_lst):
+            stop = True
+
+        for j in range(10):
+            while not queues[str(j)].is_empty():
+                queues['main'].enqueue(queues[str(j)].dequeue())
+
+    return queues['main'].items
+
+
+if __name__ == '__main__':
+    print(radix_sort([32673, 61, 1212, 45, 999999]))
+
